@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">GardenPieClient</string>
+    <string name="connection_pref_str">Connection</string>
+    <string name="connection_option_pref_str">Connection Options</string>
+    <string-array name="connection_options_entries">
+        <item>Bluetooth</item>
+        <item>TCP/IP</item>
+    </string-array>
+    <string-array name="connection_options_values">
+        <item>bluetooth</item>
+        <item>tcp/ip</item>
+    </string-array>
+    <string name="connection_option_default_str">Bluetooth</string>
+    <string name="settings_menu_str">Settings</string>
+    <string name="garden_pie_title_str">Garden Pie</string>
 </resources>

@@ -5,6 +5,7 @@ package com.steveq.gardenpieclient.presentation.activities.interfaces;
  */
 
 public interface MainActivityPresenter {
+    void initView();
     void initBluetooth();
     void controlPermissionRequest();
     void findBluetoothDevices();

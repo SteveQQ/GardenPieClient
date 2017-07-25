@@ -44,6 +44,11 @@ public class MainActivityPresenterImpl implements MainActivityPresenter {
     }
 
     @Override
+    public void initView() {
+        mainView.prepareViews();
+    }
+
+    @Override
     public void initBluetooth() {
         bluetoothCommunicator = new BluetoothCommunicator((Activity)mainView);
         bluetoothCommunicator.enableBluetooth();

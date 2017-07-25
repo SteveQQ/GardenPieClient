@@ -5,4 +5,5 @@ package com.steveq.gardenpieclient.presentation.activities.interfaces;
  */
 
 public interface MainView {
+    void prepareViews();
 }

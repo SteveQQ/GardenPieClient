@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/connection_pref_str"
+        android:key="@string/connection_pref_str">
+        <ListPreference
+            android:key="@string/connection_option_pref_str"
+            android:title="@string/connection_option_pref_str"
+            android:dialogTitle="@string/connection_option_pref_str"
+            android:entries="@array/connection_options_entries"
+            android:entryValues="@array/connection_options_values"
+            android:defaultValue="@string/connection_option_default_str"
+            />
+    </PreferenceCategory>
+</PreferenceScreen>

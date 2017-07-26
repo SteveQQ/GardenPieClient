@@ -6,4 +6,6 @@ package com.steveq.gardenpieclient.presentation.activities.interfaces;
 
 public interface MainView {
     void prepareViews();
+    void showWarningSnackbar(String warningMessage);
+    void connectionProcessingFinished();
 }

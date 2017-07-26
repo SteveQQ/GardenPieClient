@@ -3,11 +3,14 @@ package com.steveq.gardenpieclient.presentation.activities.presenters;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.steveq.gardenpieclient.R;
 import com.steveq.gardenpieclient.bluetooth.BluetoothCommunicator;
 import com.steveq.gardenpieclient.bluetooth.ConnectionServerRunnable;
 import com.steveq.gardenpieclient.presentation.activities.MainActivity;
@@ -22,7 +25,6 @@ public class MainActivityPresenterImpl implements MainActivityPresenter {
     private static final String TAG = MainActivityPresenterImpl.class.getSimpleName();
     private static MainActivityPresenterImpl instance;
     private MainView mainView;
-    public static final int BLUETOOTH_PERMISSION_REQUEST = 1234;
     private BluetoothCommunicator bluetoothCommunicator;
 
     private MainActivityPresenterImpl(MainView mainActivity){
@@ -49,42 +51,18 @@ public class MainActivityPresenterImpl implements MainActivityPresenter {
     }
 
     @Override
-    public void initBluetooth() {
-        bluetoothCommunicator = new BluetoothCommunicator((Activity)mainView);
-        bluetoothCommunicator.enableBluetooth();
-    }
-
-    @Override
-    public void controlPermissionRequest() {
-        if(ContextCompat.checkSelfPermission((Context)mainView, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission((Context)mainView, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission((Context)mainView, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            Log.d(TAG, "Permission not granted");
-            if(ActivityCompat.shouldShowRequestPermissionRationale((Activity)mainView, Manifest.permission.BLUETOOTH) ||
-                    ActivityCompat.shouldShowRequestPermissionRationale((Activity)mainView, Manifest.permission.BLUETOOTH_ADMIN)){
-                Log.d(TAG, "Explanation should be prompted");
-            } else {
-                ActivityCompat.requestPermissions((Activity)mainView,
-                        new String[]{Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.ACCESS_COARSE_LOCATION},
-                        BLUETOOTH_PERMISSION_REQUEST);
+    public void initConnection() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences((Context)mainView);
+        String prefConnection = sharedPreferences.getString(((Context)mainView).getString(R.string.connection_option_pref_key_str), "");
+        if(((Context)mainView).getResources().getStringArray(R.array.connection_options_values)[0].equals(prefConnection)){
+            BluetoothCommunicator.enableBluetooth((Activity)mainView);
+            BluetoothCommunicator.queryPairedDevices();
+            BluetoothCommunicator.createConnection(mainView);
+            if(!ConnectionServerRunnable.isProcessing && !ConnectionServerRunnable.isRunning){
+                mainView.showWarningSnackbar(((Context)mainView).getString(R.string.no_connection_warning_str));
             }
-        } else {
-            Log.d(TAG, "HAS PERMISSION");
-            initBluetooth();
-        }
-    }
+        } else if (((Context)mainView).getResources().getStringArray(R.array.connection_options_values)[1].equals(prefConnection)){
 
-    @Override
-    public void findBluetoothDevices() {
-        if(!bluetoothCommunicator.queryPairedDevices()){
-            bluetoothCommunicator.discoverDevices();
-        }
-    }
-
-    @Override
-    public void connectWithServerDevice() {
-        if(BluetoothCommunicator.serverDevice != null){
-            BluetoothCommunicator.createConnection();
         }
     }
 
@@ -93,5 +71,10 @@ public class MainActivityPresenterImpl implements MainActivityPresenter {
         if(ConnectionServerRunnable.bluetoothTransferService != null){
             ConnectionServerRunnable.bluetoothTransferService.write("hello world");
         }
+    }
+
+    @Override
+    public void showWarning(String warningMessage) {
+        mainView.showWarningSnackbar(warningMessage);
     }
 }

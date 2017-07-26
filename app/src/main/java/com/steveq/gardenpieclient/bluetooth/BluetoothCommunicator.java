@@ -14,6 +14,8 @@ import android.os.ParcelUuid;
 import android.os.Parcelable;
 import android.util.Log;
 
+import com.steveq.gardenpieclient.presentation.activities.interfaces.MainView;
+
 import java.util.Set;
 
 /**
@@ -22,11 +24,9 @@ import java.util.Set;
 
 public class BluetoothCommunicator {
     private static final String TAG = BluetoothCommunicator.class.getSimpleName();
-    private static BluetoothAdapter bluetoothAdapter;
-    private static Activity activity;
+    public static BluetoothAdapter bluetoothAdapter;
     public static int REQUEST_ENABLE_BT = 12;
     public static final String SERVICE_UUID = "4df91da7-44c6-4b86-afce-0deb1edf324e";
-
     public static BluetoothDevice serverDevice;
 
 
@@ -46,22 +46,21 @@ public class BluetoothCommunicator {
         }
     };
 
-    public BluetoothCommunicator(Activity activity){
-        this.activity = activity;
+    static {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if(bluetoothAdapter == null){
             Log.d(TAG, "Device does not support Bluetooth");
         }
     }
 
-    public void enableBluetooth(){
+    public static void enableBluetooth(Activity activity){
         if(!bluetoothAdapter.isEnabled()){
             Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            this.activity.startActivityForResult(intent, REQUEST_ENABLE_BT);
+            activity.startActivityForResult(intent, REQUEST_ENABLE_BT);
         }
     }
 
-    public boolean queryPairedDevices(){
+    public static boolean queryPairedDevices(){
         Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
 
         if(pairedDevices.size() > 0){
@@ -76,7 +75,8 @@ public class BluetoothCommunicator {
         return false;
     }
 
-    public void discoverDevices(){
+
+    public static void discoverDevices(Activity activity){
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         activity.registerReceiver(discoverReceiver, filter);
 
@@ -86,14 +86,16 @@ public class BluetoothCommunicator {
         }
     }
 
-    public static void createConnection(){
-        HandlerThread thread = new HandlerThread("bluetooth_client_thread");
-        thread.start();
-        Handler handler = new Handler(thread.getLooper());
-        handler.post(new ConnectionServerRunnable(serverDevice, bluetoothAdapter));
+    public static void createConnection(MainView mainView){
+        if(serverDevice != null && !ConnectionServerRunnable.isRunning){
+            HandlerThread thread = new HandlerThread("bluetooth_client_thread");
+            thread.start();
+            Handler handler = new Handler(thread.getLooper());
+            handler.post(new ConnectionServerRunnable(mainView, serverDevice, bluetoothAdapter));
+        }
     }
 
-    public void cancelDiscovering(){
+    public static void cancelDiscovering(){
         bluetoothAdapter.cancelDiscovery();
     }
 }

@@ -6,4 +6,6 @@ package com.steveq.gardenpieclient.presentation.activities.interfaces;
 
 public interface SettingsPresenter {
     void initView();
+    void controlPermissionRequest();
+    void showWarning(String warningMessage);
 }

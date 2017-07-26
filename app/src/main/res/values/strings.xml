@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">GardenPieClient</string>
-    <string name="connection_pref_str">Connection</string>
-    <string name="connection_option_pref_str">Connection Options</string>
+    <string name="connection_pref_cat_key_str">connection_category</string>
+    <string name="connection_pref_cat_title_str">Connection</string>
+    <string name="connection_option_pref_key_str">connection</string>
     <string-array name="connection_options_entries">
         <item>Bluetooth</item>
         <item>TCP/IP</item>
@@ -13,4 +14,8 @@
     <string name="connection_option_default_str">Bluetooth</string>
     <string name="settings_menu_str">Settings</string>
     <string name="garden_pie_title_str">Garden Pie</string>
+    <string name="bluetooth_paired_device_key_str">paired_device</string>
+    <string name="bluetooth_paired_device_title_str">Available Devices</string>
+    <string name="no_connection_warning_str">No Connection</string>
+    <string name="no_paired_device_warning_str">No Paired Device</string>
 </resources>

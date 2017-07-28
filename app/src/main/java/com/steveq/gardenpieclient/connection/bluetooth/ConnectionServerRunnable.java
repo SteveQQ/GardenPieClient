@@ -1,11 +1,14 @@
-package com.steveq.gardenpieclient.bluetooth;
+package com.steveq.gardenpieclient.connection.bluetooth;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.util.Log;
 
+import com.steveq.gardenpieclient.connection.ConnectionHelper;
 import com.steveq.gardenpieclient.presentation.activities.interfaces.MainView;
 
 import java.io.IOException;
@@ -15,22 +18,19 @@ import java.util.UUID;
  * Created by Adam on 2017-07-19.
  */
 
-public class ConnectionServerRunnable implements Runnable {
+class ConnectionServerRunnable implements Runnable {
     private final String TAG = ConnectionServerRunnable.class.getSimpleName();
     private final BluetoothSocket clientSocket;
     private final BluetoothDevice serverDevice;
     private BluetoothAdapter adapter;
-    public static BluetoothTransferService bluetoothTransferService;
     public static Boolean isRunning = false;
-    public static Boolean isProcessing = false;
-    private MainView mainView;
+    private ConnectionHelper connectionHelper;
 
-    public ConnectionServerRunnable(MainView mainView, BluetoothDevice device, BluetoothAdapter adapter){
+    public ConnectionServerRunnable(ConnectionHelper connectionHelper, BluetoothDevice device, BluetoothAdapter adapter){
         BluetoothSocket tmp = null;
-        this.mainView = mainView;
         serverDevice = device;
         this.adapter = adapter;
-
+        this.connectionHelper = connectionHelper;
         try {
             tmp = device.createRfcommSocketToServiceRecord(UUID.fromString(BluetoothCommunicator.SERVICE_UUID));
         } catch (IOException ioe){
@@ -46,7 +46,25 @@ public class ConnectionServerRunnable implements Runnable {
         adapter.cancelDiscovery();
 
         try {
-            isProcessing = true;
+            Log.d(TAG, "START ABORT THREAD");
+            HandlerThread abortingThread = new HandlerThread("abortConnection");
+            abortingThread.start();
+            Handler handler = new Handler(abortingThread.getLooper());
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Log.d(TAG, "ABORT???");
+                    if(!BluetoothCommunicator.isConnected()){
+                        Log.d(TAG, "ABORT!!!");
+                        try {
+                            clientSocket.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }, 5000);
+            Log.d(TAG, "TRY CONNECT!");
             clientSocket.connect();
         } catch (IOException e) {
             try {
@@ -55,19 +73,11 @@ public class ConnectionServerRunnable implements Runnable {
                 Log.d(TAG, "Could not close the client socket", e1);
             }
             isRunning = false;
-            isProcessing = false;
-            mainView.connectionProcessingFinished();
+            connectionHelper.connectedCallback();
             return;
         }
-        isProcessing = false;
-        ((Activity)mainView).runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mainView.connectionProcessingFinished();
-            }
-        });
+        connectionHelper.connectedCallback();
         Log.d(TAG, "IT'S PLACE TO MANAGE CONNECTION IN SEPARATE THREAD");
-        bluetoothTransferService = new BluetoothTransferService(clientSocket);
+        BluetoothCommunicator.bluetoothTransferService = new BluetoothTransferService(clientSocket);
     }
-
 }

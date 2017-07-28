@@ -1,6 +1,5 @@
 package com.steveq.gardenpieclient.presentation.activities;
 
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BaseTransientBottomBar;
@@ -11,7 +10,6 @@ import android.util.Log;
 import android.widget.FrameLayout;
 
 import com.steveq.gardenpieclient.R;
-import com.steveq.gardenpieclient.bluetooth.BluetoothCommunicator;
 import com.steveq.gardenpieclient.presentation.activities.interfaces.SettingsPresenter;
 import com.steveq.gardenpieclient.presentation.activities.interfaces.SettingsView;
 import com.steveq.gardenpieclient.presentation.activities.presenters.SettingsPresenterImpl;
@@ -36,12 +34,6 @@ public class SettingsActivity extends AppCompatActivity implements SettingsView{
         getFragmentManager().beginTransaction()
                                 .add(R.id.fragmentContainer, new SettingsFragment())
                                 .commit();
-    }
-
-    @Override
-    public void showWarningSnackbar(String warningMessage) {
-        Snackbar snackbar = Snackbar.make(rootView, warningMessage, BaseTransientBottomBar.LENGTH_LONG);
-        snackbar.show();
     }
 
     @Override

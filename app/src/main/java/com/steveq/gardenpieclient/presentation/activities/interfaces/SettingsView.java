@@ -6,5 +6,4 @@ package com.steveq.gardenpieclient.presentation.activities.interfaces;
 
 public interface SettingsView {
     void showSettingsFragment();
-    void showWarningSnackbar(String warningMessage);
 }

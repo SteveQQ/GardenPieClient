@@ -1,19 +1,14 @@
 package com.steveq.gardenpieclient.presentation.activities.presenters;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.steveq.gardenpieclient.R;
-import com.steveq.gardenpieclient.bluetooth.BluetoothCommunicator;
-import com.steveq.gardenpieclient.bluetooth.ConnectionServerRunnable;
-import com.steveq.gardenpieclient.presentation.activities.MainActivity;
+import com.steveq.gardenpieclient.connection.ConnectionFactory;
+import com.steveq.gardenpieclient.connection.ConnectionHelper;
 import com.steveq.gardenpieclient.presentation.activities.interfaces.MainActivityPresenter;
 import com.steveq.gardenpieclient.presentation.activities.interfaces.MainView;
 
@@ -25,7 +20,8 @@ public class MainActivityPresenterImpl implements MainActivityPresenter {
     private static final String TAG = MainActivityPresenterImpl.class.getSimpleName();
     private static MainActivityPresenterImpl instance;
     private MainView mainView;
-    private BluetoothCommunicator bluetoothCommunicator;
+    private ConnectionHelper connectionHelper;
+    private ConnectionFactory connectionFactory;
 
     private MainActivityPresenterImpl(MainView mainActivity){
         this.mainView = mainActivity;
@@ -54,22 +50,44 @@ public class MainActivityPresenterImpl implements MainActivityPresenter {
     public void initConnection() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences((Context)mainView);
         String prefConnection = sharedPreferences.getString(((Context)mainView).getString(R.string.connection_option_pref_key_str), "");
-        if(((Context)mainView).getResources().getStringArray(R.array.connection_options_values)[0].equals(prefConnection)){
-            BluetoothCommunicator.enableBluetooth((Activity)mainView);
-            BluetoothCommunicator.queryPairedDevices();
-            BluetoothCommunicator.createConnection(mainView);
-            if(!ConnectionServerRunnable.isProcessing && !ConnectionServerRunnable.isRunning){
-                mainView.showWarningSnackbar(((Context)mainView).getString(R.string.no_connection_warning_str));
-            }
-        } else if (((Context)mainView).getResources().getStringArray(R.array.connection_options_values)[1].equals(prefConnection)){
 
+        connectionFactory = new ConnectionFactory((Activity) mainView);
+        ConnectionHelper connectionHelperTmp = connectionFactory.getConnectionHelper(prefConnection);
+
+        if(connectionHelper == null){
+            connectionHelper = connectionHelperTmp;
+        } else if (!connectionHelperTmp.getClass().equals(connectionHelper.getClass())){
+            connectionHelper.disconnect();
+            connectionHelper = connectionHelperTmp;
+        }
+    }
+
+    @Override
+    public void establishConnection() {
+        mainView.showProgressBar();
+        if(connectionHelper != null){
+            Log.d(TAG, "ESTABLISH CONNECTION");
+            Log.d(TAG, connectionHelper.toString());
+            connectionHelper.connect();
+        } else {
+            mainView.hideProgressBar();
+            mainView.showWarningSnackbar(((Activity)mainView).getString(R.string.no_connection_warning_str));
         }
     }
 
     @Override
     public void sendMessageToServer() {
-        if(ConnectionServerRunnable.bluetoothTransferService != null){
-            ConnectionServerRunnable.bluetoothTransferService.write("hello world");
+        if(connectionHelper != null && connectionHelper.isConnected()){
+            connectionHelper.sendMessage("hello world");
+        } else {
+            mainView.showWarningSnackbar(((Activity)mainView).getString(R.string.no_connection_warning_str));
+        }
+    }
+
+    @Override
+    public void stopConnection() {
+        if(connectionHelper != null){
+            connectionHelper.disconnect();
         }
     }
 

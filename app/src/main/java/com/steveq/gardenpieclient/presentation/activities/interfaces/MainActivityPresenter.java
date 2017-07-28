@@ -7,6 +7,8 @@ package com.steveq.gardenpieclient.presentation.activities.interfaces;
 public interface MainActivityPresenter {
     void initView();
     void initConnection();
+    void establishConnection();
     void sendMessageToServer();
+    void stopConnection();
     void showWarning(String warningMessage);
 }

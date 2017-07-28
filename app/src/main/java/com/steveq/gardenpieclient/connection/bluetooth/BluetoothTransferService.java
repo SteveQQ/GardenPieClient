@@ -1,7 +1,6 @@
-package com.steveq.gardenpieclient.bluetooth;
+package com.steveq.gardenpieclient.connection.bluetooth;
 
 import android.bluetooth.BluetoothSocket;
-import android.os.Handler;
 import android.util.Log;
 
 import java.io.IOException;
@@ -12,12 +11,12 @@ import java.io.OutputStream;
  * Created by Adam on 2017-07-20.
  */
 
-public class BluetoothTransferService{
+class BluetoothTransferService{
     private static final String TAG = BluetoothTransferService.class.getSimpleName();
 
     private final BluetoothSocket socket;
-    private final InputStream inputStream;
-    private final OutputStream outputStream;
+    public final InputStream inputStream;
+    public final OutputStream outputStream;
     private byte[] buffer;
 
     public BluetoothTransferService(BluetoothSocket socket){
@@ -47,6 +46,16 @@ public class BluetoothTransferService{
             outputStream.write(message.getBytes());
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void closeInputStream(){
+        if(inputStream != null){
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

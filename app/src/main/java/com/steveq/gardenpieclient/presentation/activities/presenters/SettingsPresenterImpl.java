@@ -8,7 +8,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
-import com.steveq.gardenpieclient.bluetooth.BluetoothCommunicator;
 import com.steveq.gardenpieclient.presentation.activities.interfaces.SettingsPresenter;
 import com.steveq.gardenpieclient.presentation.activities.interfaces.SettingsView;
 
@@ -48,10 +47,5 @@ public class SettingsPresenterImpl implements SettingsPresenter {
         } else {
             Log.d(TAG, "HAS PERMISSION");
         }
-    }
-
-    @Override
-    public void showWarning(String warningMessage) {
-        settingsView.showWarningSnackbar(warningMessage);
     }
 }

@@ -4,7 +4,7 @@ import android.app.Activity;
 
 import com.steveq.gardenpieclient.R;
 import com.steveq.gardenpieclient.connection.ConnectionHelper;
-import com.steveq.gardenpieclient.presentation.activities.interfaces.SuperView;
+import com.steveq.gardenpieclient.presentation.SuperView;
 
 /**
  * Created by Adam on 2017-07-28.

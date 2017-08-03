@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 
 import com.steveq.gardenpieclient.R;
@@ -11,6 +12,10 @@ import com.steveq.gardenpieclient.connection.ConnectionFactory;
 import com.steveq.gardenpieclient.connection.ConnectionHelper;
 import com.steveq.gardenpieclient.presentation.activities.interfaces.MainActivityPresenter;
 import com.steveq.gardenpieclient.presentation.activities.interfaces.MainView;
+import com.steveq.gardenpieclient.presentation.adapters.MyPagerAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Adam on 2017-07-19.
@@ -57,6 +62,7 @@ public class MainActivityPresenterImpl implements MainActivityPresenter {
         if(connectionHelper == null){
             connectionHelper = connectionHelperTmp;
         } else if (!connectionHelperTmp.getClass().equals(connectionHelper.getClass())){
+            Log.d(TAG, "SWAP CONNECTION SOURCE");
             connectionHelper.disconnect();
             connectionHelper = connectionHelperTmp;
         }
@@ -64,9 +70,10 @@ public class MainActivityPresenterImpl implements MainActivityPresenter {
 
     @Override
     public void establishConnection() {
+        mainView.dismissWarningSnackbar();
         mainView.showProgressBar();
         if(connectionHelper != null){
-            Log.d(TAG, "ESTABLISH CONNECTION");
+            Log.d(TAG, "ESTABLISHING CONNECTION");
             Log.d(TAG, connectionHelper.toString());
             connectionHelper.connect();
         } else {
@@ -92,7 +99,7 @@ public class MainActivityPresenterImpl implements MainActivityPresenter {
     }
 
     @Override
-    public void showWarning(String warningMessage) {
-        mainView.showWarningSnackbar(warningMessage);
+    public ConnectionHelper getConnectionHelper() {
+        return connectionHelper;
     }
 }

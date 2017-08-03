@@ -58,12 +58,14 @@ class ConnectionServerRunnable implements Runnable {
                         Log.d(TAG, "ABORT!!!");
                         try {
                             clientSocket.close();
+                            connectionHelper.connectedCallback();
+                            return;
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
                 }
-            }, 5000);
+            }, 7000);
             Log.d(TAG, "TRY CONNECT!");
             clientSocket.connect();
         } catch (IOException e) {
@@ -78,6 +80,10 @@ class ConnectionServerRunnable implements Runnable {
         }
         connectionHelper.connectedCallback();
         Log.d(TAG, "IT'S PLACE TO MANAGE CONNECTION IN SEPARATE THREAD");
+        HandlerThread thread = new HandlerThread("bluetooth_transfer_thread");
+        thread.start();
+        Handler handler = new Handler(thread.getLooper());
         BluetoothCommunicator.bluetoothTransferService = new BluetoothTransferService(clientSocket);
+        handler.post(BluetoothCommunicator.bluetoothTransferService);
     }
 }

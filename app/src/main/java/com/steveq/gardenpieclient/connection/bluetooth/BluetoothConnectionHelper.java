@@ -1,11 +1,12 @@
 package com.steveq.gardenpieclient.connection.bluetooth;
 
 import android.app.Activity;
+import android.os.Handler;
+import android.util.Log;
 
 import com.steveq.gardenpieclient.R;
 import com.steveq.gardenpieclient.connection.ConnectionHelper;
-import com.steveq.gardenpieclient.presentation.activities.interfaces.MainView;
-import com.steveq.gardenpieclient.presentation.activities.interfaces.SuperView;
+import com.steveq.gardenpieclient.presentation.SuperView;
 
 /**
  * Created by Adam on 2017-07-27.
@@ -16,6 +17,7 @@ public class BluetoothConnectionHelper implements ConnectionHelper {
     public static int REQUEST_ENABLE_BT = 12;
     private Activity activity;
     private BluetoothCommunicator bluetoothCommunicator;
+    public Handler handler;
 
     public BluetoothConnectionHelper(Activity activity){
         this.activity = activity;
@@ -24,6 +26,7 @@ public class BluetoothConnectionHelper implements ConnectionHelper {
 
     @Override
     public void connect() {
+        Log.d(TAG, "IS CONNECTED ? : " + isConnected());
         if(!isConnected()){
             bluetoothCommunicator.enableBluetooth(this.activity);
             bluetoothCommunicator.queryPairedDevices();

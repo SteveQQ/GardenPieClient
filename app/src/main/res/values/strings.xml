@@ -18,4 +18,6 @@
     <string name="bluetooth_paired_device_title_str">Available Devices</string>
     <string name="no_connection_warning_str">No Connection</string>
     <string name="no_paired_device_warning_str">No Paired Device</string>
+
+    <string name="go_online_str">GO ONLINE</string>
 </resources>

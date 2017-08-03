@@ -1,11 +1,19 @@
 <resources>
 
+    <color name="material_blue_grey_800x">#37474F</color>
+    <color name="material_blue_grey_600">#546E7A</color>
+    <color name="material_blue_grey_200">#B0BEC5</color>
+    <color name="material_amber_A700">#FFAB00</color>
+    <color name="material_amber_A400">#FFC400</color>
+    <color name="material_grey_300_">#E0E0E0</color>
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/material_blue_grey_600</item>
+        <item name="colorPrimaryDark">@color/material_blue_grey_800x</item>
+        <item name="colorAccent">@color/material_amber_A700</item>
+        <item name="android:windowBackground">@color/material_blue_grey_200</item>
+        <item name="android:textColor">@color/material_grey_300_</item>
     </style>
 
 </resources>

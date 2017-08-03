@@ -45,10 +45,11 @@ class BluetoothCommunicator {
 
     public boolean queryPairedDevices(){
         Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
-
+        Log.d(TAG, "Query for paired devices : " + pairedDevices);
         if(pairedDevices.size() > 0){
             for(BluetoothDevice device : pairedDevices){
-                if(device.getName().equals("raspberrypi")){
+                Log.d(TAG, "Device Name : " + device.getName());
+                if(device.getName().equals("raspberrypi") || device.getName().equals("BlueZ 5.23")){
                     Log.d(TAG, "FOUND AMONG PAIRED DEVICES");
                     serverDevice = device;
                     return true;
@@ -70,18 +71,11 @@ class BluetoothCommunicator {
 
     public void breakConnection(){
         if(isConnected()){
-            try {
-                bluetoothTransferService.inputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            bluetoothTransferService.closeInputStream();
         }
     }
 
     public static Boolean isConnected(){
-        if(bluetoothTransferService != null){
-            return bluetoothTransferService.inputStream != null;
-        }
-        return false;
+        return bluetoothTransferService != null && bluetoothTransferService.isOpen;
     }
 }

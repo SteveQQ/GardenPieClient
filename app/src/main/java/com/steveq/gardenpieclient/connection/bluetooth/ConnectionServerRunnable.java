@@ -1,6 +1,5 @@
 package com.steveq.gardenpieclient.connection.bluetooth;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -9,7 +8,6 @@ import android.os.HandlerThread;
 import android.util.Log;
 
 import com.steveq.gardenpieclient.connection.ConnectionHelper;
-import com.steveq.gardenpieclient.presentation.activities.interfaces.MainView;
 
 import java.io.IOException;
 import java.util.UUID;

@@ -2,8 +2,10 @@ package com.steveq.gardenpieclient.connection;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Handler;
 
 import com.steveq.gardenpieclient.R;
+import com.steveq.gardenpieclient.base.BaseActivity;
 import com.steveq.gardenpieclient.connection.bluetooth.BluetoothConnectionHelper;
 import com.steveq.gardenpieclient.connection.tcp.TcpConnectionHelper;
 
@@ -13,9 +15,9 @@ import com.steveq.gardenpieclient.connection.tcp.TcpConnectionHelper;
 
 public class ConnectionFactory {
     private static final String TAG = ConnectionFactory.class.getSimpleName();
-    private Activity activity;
+    private BaseActivity activity;
 
-    public ConnectionFactory(Activity activity){
+    public ConnectionFactory(BaseActivity activity){
         this.activity = activity;
     }
 

@@ -5,6 +5,6 @@
     android:id="@+id/fragmentContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.steveq.gardenpieclient.presentation.activities.SettingsActivity">
+    tools:context="com.steveq.gardenpieclient.settings.presentation.activities.SettingsActivity">
 
 </FrameLayout>

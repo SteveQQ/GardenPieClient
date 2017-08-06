@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.steveq.gardenpieclient.presentation.activities.MainActivity">
+    tools:context="com.steveq.gardenpieclient.main_view.presentation.MainActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/mainToolbar"

@@ -5,8 +5,8 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.steveq.gardenpieclient.R;
+import com.steveq.gardenpieclient.base.BaseActivity;
 import com.steveq.gardenpieclient.connection.ConnectionHelper;
-import com.steveq.gardenpieclient.presentation.SuperView;
 
 /**
  * Created by Adam on 2017-07-27.
@@ -15,19 +15,21 @@ import com.steveq.gardenpieclient.presentation.SuperView;
 public class BluetoothConnectionHelper implements ConnectionHelper {
     private static final String TAG = BluetoothConnectionHelper.class.getSimpleName();
     public static int REQUEST_ENABLE_BT = 12;
-    private Activity activity;
+    public static final Integer BT_MSG = 22;
+    private BaseActivity activity;
     private BluetoothCommunicator bluetoothCommunicator;
-    public Handler handler;
+    public static Handler messageHandler;
 
-    public BluetoothConnectionHelper(Activity activity){
+    public BluetoothConnectionHelper(BaseActivity activity){
         this.activity = activity;
         bluetoothCommunicator = new BluetoothCommunicator();
     }
 
     @Override
-    public void connect() {
+    public void connect(Handler messageHandler) {
         Log.d(TAG, "IS CONNECTED ? : " + isConnected());
         if(!isConnected()){
+            this.messageHandler = messageHandler;
             bluetoothCommunicator.enableBluetooth(this.activity);
             bluetoothCommunicator.queryPairedDevices();
             bluetoothCommunicator.createConnection(this);
@@ -36,7 +38,11 @@ public class BluetoothConnectionHelper implements ConnectionHelper {
 
     @Override
     public void sendMessage(String message) {
-        BluetoothCommunicator.bluetoothTransferService.write(message);
+        if(isConnected()){
+            BluetoothCommunicator.bluetoothTransferService.write(message);
+        } else {
+            connectedCallback();
+        }
     }
 
     @Override
@@ -54,9 +60,9 @@ public class BluetoothConnectionHelper implements ConnectionHelper {
         this.activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                ((SuperView)activity).hideProgressBar();
+                activity.hideProgressBar();
                 if(!isConnected()){
-                    ((SuperView)activity).showWarningSnackbar(activity.getString(R.string.no_connection_warning_str));
+                    activity.showWarningSnackbar(activity.getString(R.string.no_connection_warning_str));
                 }
             }
         });

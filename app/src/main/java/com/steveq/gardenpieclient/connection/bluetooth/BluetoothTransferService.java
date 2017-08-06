@@ -5,8 +5,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import com.steveq.gardenpieclient.presentation.adapters.MyPagerAdapter;
-import com.steveq.gardenpieclient.presentation.fragments.SectionsFragment;
+import com.steveq.gardenpieclient.main_view.adapters.MyPagerAdapter;
+import com.steveq.gardenpieclient.sections.presentation.SectionsFragment;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +23,6 @@ class BluetoothTransferService implements Runnable{
     public final InputStream inputStream;
     public final OutputStream outputStream;
     public boolean isOpen = false;
-    public Handler handler = ((SectionsFragment)MyPagerAdapter.fragmentsPoll.get(1)).mainHandler;
     private byte[] buffer;
 
     public BluetoothTransferService(BluetoothSocket socket){
@@ -56,8 +55,9 @@ class BluetoothTransferService implements Runnable{
         while(true){
             try {
                 inputStream.read(buffer);
-                Message readMsg = handler.obtainMessage(
-                        2, -1, -1,
+                Log.d(TAG, "RECEIVED MESSAGE");
+                Message readMsg =  BluetoothConnectionHelper.messageHandler.obtainMessage(
+                        BluetoothConnectionHelper.BT_MSG, -1, -1,
                         buffer);
                 readMsg.sendToTarget();
             } catch (IOException e) {

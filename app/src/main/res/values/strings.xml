@@ -20,4 +20,16 @@
     <string name="no_paired_device_warning_str">No Paired Device</string>
 
     <string name="go_online_str">GO ONLINE</string>
+    <string name="section_name_str">Section</string>
+    <string-array name="days">
+        <item>MONDAY</item>
+        <item>TUESDAY</item>
+        <item>WEDNESDAY</item>
+        <item>THURSDAY</item>
+        <item>FRIDAY</item>
+        <item>SATURDAY</item>
+        <item>SUNDAY</item>
+    </string-array>
+    <string name="empty_time_str">...</string>
+    <string name="set_time_str">Set Time</string>
 </resources>

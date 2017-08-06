@@ -1,10 +1,11 @@
 package com.steveq.gardenpieclient.connection.tcp;
 
 import android.app.Activity;
+import android.os.Handler;
 
 import com.steveq.gardenpieclient.R;
+import com.steveq.gardenpieclient.base.BaseActivity;
 import com.steveq.gardenpieclient.connection.ConnectionHelper;
-import com.steveq.gardenpieclient.presentation.SuperView;
 
 /**
  * Created by Adam on 2017-07-28.
@@ -19,7 +20,7 @@ public class TcpConnectionHelper implements ConnectionHelper {
     }
 
     @Override
-    public void connect() {
+    public void connect(Handler messageHandler) {
         connectedCallback();
     }
 
@@ -40,7 +41,7 @@ public class TcpConnectionHelper implements ConnectionHelper {
 
     @Override
     public void connectedCallback() {
-        ((SuperView)activity).hideProgressBar();
-        ((SuperView)activity).showWarningSnackbar(activity.getString(R.string.no_connection_warning_str));
+        ((BaseActivity)activity).hideProgressBar();
+        ((BaseActivity)activity).showWarningSnackbar(activity.getString(R.string.no_connection_warning_str));
     }
 }

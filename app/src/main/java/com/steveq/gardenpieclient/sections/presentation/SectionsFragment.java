@@ -2,6 +2,7 @@ package com.steveq.gardenpieclient.sections.presentation;
 
 
 import android.app.AlertDialog;
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Message;
@@ -22,7 +23,10 @@ import com.steveq.gardenpieclient.base.BaseActivity;
 import com.steveq.gardenpieclient.communication.body_builder.JsonProcessor;
 import com.steveq.gardenpieclient.communication.models.Section;
 import com.steveq.gardenpieclient.connection.bluetooth.BluetoothConnectionHelper;
+import com.steveq.gardenpieclient.sections.adapters.SectionsRecyclerViewAdapter;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Handler;
 
@@ -102,31 +106,35 @@ public class SectionsFragment extends Fragment implements SectionsFragmentView, 
     }
 
     @Override
-    public void showTimesDialog(Section section) {
+    public void showSetTimeDialog(Section section) {
+        SimpleDateFormat sdfHours = new SimpleDateFormat("HH");
+        SimpleDateFormat sdfMinutes = new SimpleDateFormat("mm");
+        TimePickerDialog.OnTimeSetListener listener = new SectionsFragmentPresenterImpl.TimeListener(section);
+        TimePickerDialog tmd = new TimePickerDialog(getActivity(), listener, Integer.valueOf(sdfHours.format(new Date())) + 1, Integer.valueOf(sdfMinutes.format(new Date())), true);
+        tmd.getWindow().setBackgroundDrawableResource(R.color.material_blue_grey_200);
+        tmd.show();
+    }
+
+    @Override
+    public void showDeleteTimesDialog(final Section section) {
         List<String> timesToCheck = section.getTimes();
-        boolean[] checkedItems = new boolean[MAX_TIMES];
+        boolean[] checkedItems = new boolean[section.getTimes().size()];
 
-        for(int i=0; i < MAX_TIMES; i++){
-            if(timesToCheck.get(i) != null){
-                checkedItems[i] = true;
-            } else {
-                timesToCheck.add(getString(R.string.empty_time_str));
-                checkedItems[i] = false;
-            }
+        int counter = 0;
+        for(String time : timesToCheck){
+            checkedItems[counter] = true;
+            counter++;
         }
 
-        while(timesToCheck.size() < MAX_TIMES){
-            timesToCheck.add(getString(R.string.empty_time_str));
-        }
-
-        final SectionsFragmentPresenterImpl.DaysListener listener = new SectionsFragmentPresenterImpl.DaysListener();
+        final SectionsFragmentPresenterImpl.TimesListener listener = new SectionsFragmentPresenterImpl.TimesListener(section);
+        listener.setChosenTimes(timesToCheck);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.MyDialogTheme);
         builder.setTitle(getResources().getString(R.string.set_time_str))
-                .setMultiChoiceItems(getResources().getStringArray(R.array.days), checkedItems, listener)
+                .setMultiChoiceItems(timesToCheck.toArray(new String[]{}), checkedItems, listener)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Log.d(TAG, "COLLECT SELECTED TIMES");
+                        presenter.collectTimes(section, listener);
                     }
                 })
                 .setNegativeButton("CANCEL", null);
@@ -154,6 +162,7 @@ public class SectionsFragment extends Fragment implements SectionsFragmentView, 
             Log.d(TAG, "Message : " + new String((byte[])msg.obj));
             List<Integer> sectionsNums = JsonProcessor.getInstance().deserializeSectionsInformation(new String((byte[])msg.obj));
             if(sectionsNums.size() > 0) {
+                ((SectionsRecyclerViewAdapter)SectionsFragmentPresenterImpl.sectionsAdapter).setScannedSectionsNums(sectionsNums);
                 presenter.presentSections(sectionsNums);
             }
             ((BaseActivity)getActivity()).hideProgressBar();
@@ -163,8 +172,35 @@ public class SectionsFragment extends Fragment implements SectionsFragmentView, 
     }
 
     @Override
-    public void showDaysDialog() {
+    public void showDaysDialog(final Section section) {
+        List<String> daysToCheck = section.getDays();
+        String[] configuredDays = getResources().getStringArray(R.array.days);
+        boolean[] checkedItems = new boolean[configuredDays.length];
+        int i = 0;
+        for(String day : configuredDays){
+            if(daysToCheck.contains(day)){
+                checkedItems[i] = true;
+            } else {
+                checkedItems[i] = false;
+            }
+            i++;
 
+        }
+        final SectionsFragmentPresenterImpl.DaysListener listener = new SectionsFragmentPresenterImpl.DaysListener();
+        Log.d(TAG, "DAYS TO CHECK : " + daysToCheck);
+        listener.setChosenDays(daysToCheck);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.MyDialogTheme);
+        builder.setTitle(getResources().getString(R.string.days_choose))
+                .setMultiChoiceItems(getResources().getStringArray(R.array.days), checkedItems, listener)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        presenter.collectDays(section, listener);
+                    }
+                })
+                .setNegativeButton("CANCEL", null);
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     @Override

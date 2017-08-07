@@ -21,6 +21,7 @@
 
     <string name="go_online_str">GO ONLINE</string>
     <string name="section_name_str">Section</string>
+    <string name="days_choose">Choose Days</string>
     <string-array name="days">
         <item>MONDAY</item>
         <item>TUESDAY</item>
@@ -32,4 +33,5 @@
     </string-array>
     <string name="empty_time_str">...</string>
     <string name="set_time_str">Set Time</string>
+    <string name="max_times_warning_str">Max Times Set Reached...</string>
 </resources>

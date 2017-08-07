@@ -118,6 +118,7 @@ public class SectionsRepository implements Repository {
 
         for(int i : sections.keySet()){
             sections.get(i).setDays(getDaysForSection(i));
+            sections.get(i).setTimes(getTimesForSection(i));
         }
 
         if(sections.size() > 1){
@@ -291,7 +292,7 @@ public class SectionsRepository implements Repository {
         for(String day : days){
             int affectedRows = database.delete(
                     SectionsContract.SectionsDaysEntry.TABLE_NAME,
-                    SectionsContract.SectionsDaysEntry.COLUMN_SECTION_ID + " = ? ",
+                    SectionsContract.SectionsDaysEntry.COLUMN_SECTION_ID + " = ? and " + SectionsContract.SectionsDaysEntry.COLUMN_DAY + " = ?",
                     new String[]{String.valueOf(id), day}
             );
             if(affectedRows > 0) deleted = true;
@@ -378,7 +379,7 @@ public class SectionsRepository implements Repository {
         for(String time : times){
             int affectedRows = database.delete(
                     SectionsContract.SectionsTimesEntry.TABLE_NAME,
-                    SectionsContract.SectionsTimesEntry.COLUMN_SECTION_ID + " = ? ",
+                    SectionsContract.SectionsTimesEntry.COLUMN_SECTION_ID + " = ?  and " + SectionsContract.SectionsTimesEntry.COLUMN_TIME + " = ?",
                     new String[]{String.valueOf(id), time}
             );
             if(affectedRows > 0) deleted = true;

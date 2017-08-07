@@ -11,9 +11,10 @@ import com.steveq.gardenpieclient.communication.models.Section;
 public interface SectionsFragmentView {
     void showRecyclerView();
     void hideRecyclerView();
-    void showDaysDialog();
+    void showDaysDialog(Section section);
     void showSectionsRecyclerView();
-    void showTimesDialog(Section section);
+    void showSetTimeDialog(Section section);
+    void showDeleteTimesDialog(Section section);
     void configRecyclerView(RecyclerView.Adapter adapter);
     SectionsFragmentPresenter getPresenter();
 }

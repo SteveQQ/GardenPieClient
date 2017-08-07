@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.View;
 
 import com.steveq.gardenpieclient.R;
 import com.steveq.gardenpieclient.base.BaseActivity;
@@ -77,7 +78,15 @@ public class MainActivityPresenterImpl implements MainActivityPresenter {
             connectionHelper.connect(BaseActivity.mainHandler);
         } else {
             ((BaseActivity)mainView).hideProgressBar();
-            ((BaseActivity)mainView).showWarningSnackbar(((Activity)mainView).getString(R.string.no_connection_warning_str));
+            ((BaseActivity)mainView).showWarningSnackbarWithAction(
+                    ((Activity) mainView).getString(R.string.no_connection_warning_str),
+                    ((Activity) mainView).getString(R.string.go_online_str),
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            establishConnection();
+                        }
+                    });
         }
     }
 
@@ -86,7 +95,15 @@ public class MainActivityPresenterImpl implements MainActivityPresenter {
         if(connectionHelper != null && connectionHelper.isConnected()){
             connectionHelper.sendMessage("hello world");
         } else {
-            ((BaseActivity)mainView).showWarningSnackbar(((Activity)mainView).getString(R.string.no_connection_warning_str));
+            ((BaseActivity)mainView).showWarningSnackbarWithAction(
+                    ((Activity) mainView).getString(R.string.no_connection_warning_str),
+                    ((Activity) mainView).getString(R.string.go_online_str),
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            establishConnection();
+                        }
+                    });
         }
     }
 

@@ -3,6 +3,7 @@ package com.steveq.gardenpieclient.connection.bluetooth;
 import android.app.Activity;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
 
 import com.steveq.gardenpieclient.R;
 import com.steveq.gardenpieclient.base.BaseActivity;
@@ -62,9 +63,26 @@ public class BluetoothConnectionHelper implements ConnectionHelper {
             public void run() {
                 activity.hideProgressBar();
                 if(!isConnected()){
-                    activity.showWarningSnackbar(activity.getString(R.string.no_connection_warning_str));
+                    activity.showWarningSnackbarWithAction(
+                            activity.getString(R.string.no_connection_warning_str),
+                            activity.getString(R.string.go_online_str),
+                            getGoOnlineAction());
                 }
             }
         });
+    }
+
+    @Override
+    public View.OnClickListener getGoOnlineAction() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                activity.dismissWarningSnackbar();
+                activity.showProgressBar();
+                Log.d(TAG, "ESTABLISHING CONNECTION");
+                Log.d(TAG, this.toString());
+                connect(BaseActivity.mainHandler);
+            }
+        };
     }
 }

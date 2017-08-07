@@ -10,7 +10,8 @@ import java.util.List;
 
 public interface SectionsFragmentPresenter {
     void initView();
-    void collectTimes();
+    void collectDays(Section section, SectionsFragmentPresenterImpl.DaysListener listener);
+    void collectTimes(Section section, SectionsFragmentPresenterImpl.TimesListener listener);
     void scanForSections();
     void presentSections(List<Integer> sections);
 }

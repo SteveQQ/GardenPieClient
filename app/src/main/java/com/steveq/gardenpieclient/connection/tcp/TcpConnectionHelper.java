@@ -2,6 +2,7 @@ package com.steveq.gardenpieclient.connection.tcp;
 
 import android.app.Activity;
 import android.os.Handler;
+import android.view.View;
 
 import com.steveq.gardenpieclient.R;
 import com.steveq.gardenpieclient.base.BaseActivity;
@@ -43,5 +44,10 @@ public class TcpConnectionHelper implements ConnectionHelper {
     public void connectedCallback() {
         ((BaseActivity)activity).hideProgressBar();
         ((BaseActivity)activity).showWarningSnackbar(activity.getString(R.string.no_connection_warning_str));
+    }
+
+    @Override
+    public View.OnClickListener getGoOnlineAction() {
+        return null;
     }
 }

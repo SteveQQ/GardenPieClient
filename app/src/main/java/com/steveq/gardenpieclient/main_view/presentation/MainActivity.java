@@ -120,16 +120,16 @@ public class MainActivity extends BaseActivity implements MainView {
 
     @Override
     public void showWarningSnackbar(String warningMessage) {
-        warningSnackbar = Snackbar.make(rootView, warningMessage, BaseTransientBottomBar.LENGTH_INDEFINITE)
-                                    .setAction(getString(R.string.go_online_str), new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            presenter.establishConnection();
-                                        }
-                                    });
+        warningSnackbar = Snackbar.make(rootView, warningMessage, BaseTransientBottomBar.LENGTH_LONG);
         warningSnackbar.show();
     }
 
+    @Override
+    public void showWarningSnackbarWithAction(String warningMessage, String actionString, View.OnClickListener listener) {
+        warningSnackbar = Snackbar.make(rootView, warningMessage, BaseTransientBottomBar.LENGTH_INDEFINITE)
+                .setAction(actionString, listener);
+        warningSnackbar.show();
+    }
 
 
     @Override

@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,9 +17,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.github.clans.fab.FloatingActionMenu;
 import com.steveq.gardenpieclient.R;
 import com.steveq.gardenpieclient.base.BaseActivity;
-import com.steveq.gardenpieclient.communication.body_builder.JsonProcessor;
+import com.steveq.gardenpieclient.communication.JsonProcessor;
+import com.steveq.gardenpieclient.communication.models.FromServerResponse;
 import com.steveq.gardenpieclient.communication.models.Section;
 import com.steveq.gardenpieclient.connection.bluetooth.BluetoothConnectionHelper;
 import com.steveq.gardenpieclient.sections.adapters.SectionsRecyclerViewAdapter;
@@ -28,7 +29,6 @@ import com.steveq.gardenpieclient.sections.adapters.SectionsRecyclerViewAdapter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Handler;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,7 +38,11 @@ public class SectionsFragment extends Fragment implements SectionsFragmentView, 
     private static final Integer MAX_TIMES = 6;
     private SectionsFragmentPresenter presenter;
     private RecyclerView sectionsRecycler;
-    private FloatingActionButton uploadFab;
+
+    private FloatingActionMenu sectionsMenuFab;
+    private com.github.clans.fab.FloatingActionButton uploadFab;
+    private com.github.clans.fab.FloatingActionButton downloadFab;
+
     private SwipeRefreshLayout swipeRefreshLayout;
     private TextView emptyTextView;
     public static Boolean receivedMsg = false;
@@ -49,10 +53,18 @@ public class SectionsFragment extends Fragment implements SectionsFragmentView, 
             swipeRefreshLayout.setRefreshing(false);
         }
     };
-    private View.OnClickListener fabClick = new View.OnClickListener() {
+    private View.OnClickListener uploadFabClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Log.d(TAG, "UPLOAD DATA TO SERVER");
+            presenter.uploadScannedSectionsData();
+        }
+    };
+
+    private View.OnClickListener downloadFabClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Log.d(TAG, "DOWNLOAD DATA FROM SERVER");
         }
     };
 
@@ -77,7 +89,13 @@ public class SectionsFragment extends Fragment implements SectionsFragmentView, 
         swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
         swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.material_amber_A700, null));
         sectionsRecycler = (RecyclerView) viewGroup.findViewById(R.id.sectionsRecyclerView);
-        uploadFab = (FloatingActionButton) viewGroup.findViewById(R.id.updateAlarmsFab);
+
+        sectionsMenuFab = (FloatingActionMenu) viewGroup.findViewById(R.id.sectionsFloatingMenu);
+        uploadFab = (com.github.clans.fab.FloatingActionButton) viewGroup.findViewById(R.id.sectionsUploadFloatingButton);
+        uploadFab.setOnClickListener(uploadFabClick);
+        downloadFab = (com.github.clans.fab.FloatingActionButton) viewGroup.findViewById(R.id.sectionsDownloadFloatingButton);
+        downloadFab.setOnClickListener(downloadFabClick);
+
         emptyTextView = (TextView) viewGroup.findViewById(R.id.emptyRecyclerViewReplacement);
         presenter.initView();
         return viewGroup;
@@ -160,10 +178,26 @@ public class SectionsFragment extends Fragment implements SectionsFragmentView, 
         if(msg.what == BluetoothConnectionHelper.BT_MSG){
             receivedMsg = true;
             Log.d(TAG, "Message : " + new String((byte[])msg.obj));
-            List<Integer> sectionsNums = JsonProcessor.getInstance().deserializeSectionsInformation(new String((byte[])msg.obj));
-            if(sectionsNums.size() > 0) {
-                ((SectionsRecyclerViewAdapter)SectionsFragmentPresenterImpl.sectionsAdapter).setScannedSectionsNums(sectionsNums);
-                presenter.presentSections(sectionsNums);
+            //List<Integer> sectionsNums = JsonProcessor.getInstance().deserializeServerResponse(new String((byte[])msg.obj));
+            FromServerResponse response = JsonProcessor.getInstance().deserializeServerResponse(new String((byte[])msg.obj));
+            switch(JsonProcessor.Method.valueOf(response.getMethod())){
+                case SCAN :
+                    if(response.getSections().size() > 0) {
+                        ((SectionsRecyclerViewAdapter)SectionsFragmentPresenterImpl.sectionsAdapter).setScannedSectionsNums(response.getSections());
+                        presenter.presentSections(response.getSections());
+                    }
+                    break;
+                case UPLOAD :
+                    StringBuilder syncedSections = new StringBuilder();
+                    for(Integer i : response.getSections()){
+                        syncedSections.append(i);
+                        syncedSections.append(",");
+                    }
+                    syncedSections.deleteCharAt(syncedSections.length()-1);
+                    ((BaseActivity)getActivity()).showWarningSnackbar("Synced sections : " + syncedSections.toString());
+                    break;
+                default :
+                    break;
             }
             ((BaseActivity)getActivity()).hideProgressBar();
             return true;

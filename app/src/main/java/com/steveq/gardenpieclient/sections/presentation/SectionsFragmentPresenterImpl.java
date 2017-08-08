@@ -1,12 +1,9 @@
 package com.steveq.gardenpieclient.sections.presentation;
 
-import android.app.Activity;
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,23 +13,17 @@ import android.widget.TimePicker;
 import com.steveq.gardenpieclient.R;
 import com.steveq.gardenpieclient.base.BaseActivity;
 import com.steveq.gardenpieclient.connection.ConnectionHelper;
-import com.steveq.gardenpieclient.connection.bluetooth.BluetoothConnectionHelper;
 import com.steveq.gardenpieclient.database.Repository;
 import com.steveq.gardenpieclient.database.SectionsRepository;
 import com.steveq.gardenpieclient.main_view.presentation.MainActivityPresenterImpl;
-import com.steveq.gardenpieclient.communication.body_builder.JsonProcessor;
+import com.steveq.gardenpieclient.communication.JsonProcessor;
 import com.steveq.gardenpieclient.communication.models.Section;
 import com.steveq.gardenpieclient.sections.adapters.SectionsRecyclerViewAdapter;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by Adam on 2017-08-03.
@@ -104,6 +95,39 @@ public class SectionsFragmentPresenterImpl implements SectionsFragmentPresenter 
         connectionHelper = MainActivityPresenterImpl.connectionHelper;
         parentActivity.showProgressBar();
         String message = JsonProcessor.getInstance().createScanRequest();
+        if(connectionHelper != null){
+            connectionHelper.sendMessage(message);
+        }
+    }
+
+    @Override
+    public void uploadScannedSectionsData() {
+        HandlerThread abortingThread = new HandlerThread("abortConnection");
+        abortingThread.start();
+        Handler handler = new Handler(abortingThread.getLooper());
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "ABORT RECEIVING MSG???");
+                if(!SectionsFragment.receivedMsg){
+                    Log.d(TAG, "ABORT RECEIVING MSG!!!");
+                    parentActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            parentActivity.hideProgressBar();
+                        }
+                    });
+                    return;
+                }
+            }
+        }, 7000);
+        parentActivity.showProgressBar();
+        List<Integer> scanned = ((SectionsRecyclerViewAdapter)sectionsAdapter).getScannedSectionsNums();
+        List<Section> sectionsToUpload = new ArrayList<>();
+        for(Integer i : scanned){
+            sectionsToUpload.add(repository.getSectionById(i));
+        }
+        String message = JsonProcessor.getInstance().createUploadRequest(sectionsToUpload);
         connectionHelper.sendMessage(message);
     }
 

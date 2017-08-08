@@ -110,7 +110,7 @@ public class SectionsRepository implements Repository {
             Section section = new Section();
             section.setNumber(cursor.getInt(cursor.getColumnIndex(SectionsContract.SectionsEntry.COLUMN_SECTION_NUM)));
             int activeStatus = cursor.getInt(cursor.getColumnIndex(SectionsContract.SectionsEntry.COLUMN_ACTIVE));
-            section.setActive(activeStatus == 0);
+            section.setActive(activeStatus == 1);
             sections.put(section.getNumber(), section);
         }
         cursor.close();

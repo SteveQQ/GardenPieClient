@@ -1,4 +1,4 @@
-package com.steveq.gardenpieclient.communication.body_builder;
+package com.steveq.gardenpieclient.communication;
 
 
 import android.util.Log;
@@ -20,6 +20,7 @@ public class JsonProcessor {
     private static final String TAG = JsonProcessor.class.getSimpleName();
     public enum Method{
         SCAN,
+        UPLOAD,
         CREATE_SCHEDULE,
         GET_STATE;
     }
@@ -42,14 +43,21 @@ public class JsonProcessor {
     public String createScanRequest(){
         ToServerRequest request = new ToServerRequest(Method.SCAN.toString());
         String json = gson.toJson(request);
-        Log.d(TAG, "CREATED JSON : " + json);
+        Log.d(TAG, "CREATED SCAN JSON : " + json);
         return json;
     }
 
-    public List<Integer> deserializeSectionsInformation(String json){
+    public String createUploadRequest(List<Section> sections){
+        ToServerRequest request = new ToServerRequest(Method.UPLOAD.toString(), sections);
+        String json = gson.toJson(request);
+        Log.d(TAG, "CREATED UPLOAD JSON : " + json);
+        return json;
+    }
+
+    public FromServerResponse deserializeServerResponse(String json){
         JsonReader reader = new JsonReader(new StringReader(json));
         reader.setLenient(true);
         FromServerResponse response = gson.fromJson(reader, FromServerResponse.class);
-        return response.getSections();
+        return response;
     }
 }

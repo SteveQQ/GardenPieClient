@@ -34,4 +34,6 @@
     <string name="empty_time_str">...</string>
     <string name="set_time_str">Set Time</string>
     <string name="max_times_warning_str">Max Times Set Reached...</string>
+    <string name="upload_label_str">Upload</string>
+    <string name="download_label_str">Download</string>
 </resources>

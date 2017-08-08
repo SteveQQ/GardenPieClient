@@ -1,6 +1,7 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.steveq.gardenpieclient.sections.presentation.SectionsFragment">
@@ -27,12 +28,39 @@
             android:text="no sections" />
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/updateAlarmsFab"
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/sectionsFloatingMenu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/upload_vec"
-        android:layout_margin="16dp"
         android:layout_gravity="bottom|end"
-        android:clickable="true"/>
+        app:menu_fab_size="normal"
+        app:menu_showShadow="true"
+        app:menu_colorNormal="@color/material_amber_A700"
+        app:menu_colorPressed="@color/material_amber_A700"
+        android:layout_margin="16dp"
+        app:menu_openDirection="up"
+        app:menu_icon="@drawable/plus_vec">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/sectionsUploadFloatingButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/upload_vec"
+            app:fab_colorNormal="@color/material_amber_A700"
+            app:fab_colorPressed="@color/material_amber_A700"
+            app:fab_size="mini"
+            app:fab_label="@string/upload_label_str"/>
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/sectionsDownloadFloatingButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/down_vec"
+            app:fab_colorNormal="@color/material_amber_A700"
+            app:fab_colorPressed="@color/material_amber_A700"
+            app:fab_size="mini"
+            app:fab_label="@string/download_label_str"/>
+
+    </com.github.clans.fab.FloatingActionMenu>
+
 </android.support.design.widget.CoordinatorLayout>

@@ -8,7 +8,7 @@ import java.util.List;
 
 public class FromServerResponse {
     private String method;
-    private List<Integer> sections;
+    private List<Section> payload;
 
     public String getMethod() {
         return method;
@@ -18,11 +18,11 @@ public class FromServerResponse {
         this.method = method;
     }
 
-    public List<Integer> getSections() {
-        return sections;
+    public List<Section> getSections() {
+        return payload;
     }
 
-    public void setSections(List<Integer> sections) {
-        this.sections = sections;
+    public void setSections(List<Section> sections) {
+        this.payload = sections;
     }
 }

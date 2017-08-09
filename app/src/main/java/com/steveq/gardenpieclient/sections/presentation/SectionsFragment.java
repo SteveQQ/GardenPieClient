@@ -27,6 +27,7 @@ import com.steveq.gardenpieclient.connection.bluetooth.BluetoothConnectionHelper
 import com.steveq.gardenpieclient.sections.adapters.SectionsRecyclerViewAdapter;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -65,6 +66,7 @@ public class SectionsFragment extends Fragment implements SectionsFragmentView, 
         @Override
         public void onClick(View v) {
             Log.d(TAG, "DOWNLOAD DATA FROM SERVER");
+            presenter.downloadScannedSectionsData();
         }
     };
 
@@ -183,19 +185,27 @@ public class SectionsFragment extends Fragment implements SectionsFragmentView, 
             switch(JsonProcessor.Method.valueOf(response.getMethod())){
                 case SCAN :
                     if(response.getSections().size() > 0) {
-                        ((SectionsRecyclerViewAdapter)SectionsFragmentPresenterImpl.sectionsAdapter).setScannedSectionsNums(response.getSections());
+                        List<Integer> sectionNums = new ArrayList<>();
+                        for(Section section : response.getSections()){
+                            sectionNums.add(section.getNumber());
+                        }
+                        ((SectionsRecyclerViewAdapter)SectionsFragmentPresenterImpl.sectionsAdapter).setScannedSectionsNums(sectionNums);
                         presenter.presentSections(response.getSections());
                     }
                     break;
                 case UPLOAD :
                     StringBuilder syncedSections = new StringBuilder();
-                    for(Integer i : response.getSections()){
-                        syncedSections.append(i);
+                    for(Section section : response.getSections()){
+                        syncedSections.append(section.getNumber());
                         syncedSections.append(",");
                     }
                     syncedSections.deleteCharAt(syncedSections.length()-1);
                     ((BaseActivity)getActivity()).showWarningSnackbar("Synced sections : " + syncedSections.toString());
                     break;
+                case DOWNLOAD :
+                    presenter.acknowledgeDownloadedData(response.getSections());
+                    //((SectionsRecyclerViewAdapter)SectionsFragmentPresenterImpl.sectionsAdapter).setPayload(response.getSections());
+                    SectionsFragmentPresenterImpl.reloadDataInAdapter();
                 default :
                     break;
             }

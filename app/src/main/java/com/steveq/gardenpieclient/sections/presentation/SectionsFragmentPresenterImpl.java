@@ -132,19 +132,58 @@ public class SectionsFragmentPresenterImpl implements SectionsFragmentPresenter 
     }
 
     @Override
-    public void presentSections(List<Integer> sectionsNums) {
-        Log.d(TAG, "PRESENT SECTIONS : " + sectionsNums);
-        //Set<Integer> allSectionsIds = repository.getSections().keySet();
+    public void downloadScannedSectionsData() {
+        HandlerThread abortingThread = new HandlerThread("abortConnection");
+        abortingThread.start();
+        Handler handler = new Handler(abortingThread.getLooper());
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "ABORT RECEIVING MSG???");
+                if(!SectionsFragment.receivedMsg){
+                    Log.d(TAG, "ABORT RECEIVING MSG!!!");
+                    parentActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            parentActivity.hideProgressBar();
+                        }
+                    });
+                    return;
+                }
+            }
+        }, 7000);
+        parentActivity.showProgressBar();
+        List<Integer> scanned = ((SectionsRecyclerViewAdapter)sectionsAdapter).getScannedSectionsNums();
+        String message = JsonProcessor.getInstance().createDownloadRequest(scanned);
+        connectionHelper.sendMessage(message);
+    }
 
-//        for(Integer i : allSectionsIds){
-//            if(!sectionsNums.contains(i)){
-//                repository.deleteSection(i);
-//            }
-//        }
-        for(Integer s : sectionsNums){
-            Section sec = repository.getSectionById(s);
+    @Override
+    public void acknowledgeDownloadedData(List<Section> sections) {
+        for(Section section : sections){
+            if(section.getDays() != null){
+                Section fromDB = repository.getSectionById(section.getNumber());
+                if(fromDB.getNumber() == null){
+                    repository.createSection(section);
+                    repository.createSectionDays(section, section.getDays());
+                    repository.createSectionTimes(section, section.getTimes());
+                } else {
+                    repository.updateSection(section);
+                    repository.updateSectionDays(section, section.getDays());
+                    repository.createSectionTimes(section, section.getTimes());
+                }
+            }
+        }
+    }
+
+    @Override
+    public void presentSections(List<Section> sections) {
+        Log.d(TAG, "PRESENT SECTIONS : " + sections);
+
+        for(Section s : sections){
+            Section sec = repository.getSectionById(s.getNumber());
             if(sec.getNumber() == null){
-                sec.setNumber(s);
+                sec.setNumber(s.getNumber());
                 sec.setActive(false);
                 sec.setTimes(new ArrayList<String>());
                 sec.setDays(new ArrayList<String>());

@@ -14,5 +14,7 @@ public interface SectionsFragmentPresenter {
     void collectTimes(Section section, SectionsFragmentPresenterImpl.TimesListener listener);
     void scanForSections();
     void uploadScannedSectionsData();
-    void presentSections(List<Integer> sections);
+    void downloadScannedSectionsData();
+    void acknowledgeDownloadedData(List<Section> sections);
+    void presentSections(List<Section> sections);
 }

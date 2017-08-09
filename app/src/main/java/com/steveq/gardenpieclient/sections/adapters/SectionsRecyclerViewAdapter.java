@@ -63,6 +63,7 @@ public class SectionsRecyclerViewAdapter extends RecyclerView.Adapter<SectionsRe
         holder.daysImageView.setOnClickListener(listener);
         holder.daysTextView.setText(createDaysDescription(payload.get(position).getDays()));
         holder.daysTextView.setOnClickListener(listener);
+        holder.activeCompatSwitch.setChecked(payload.get(position).getActive());
         holder.activeCompatSwitch.setOnClickListener(listener);
 
         listener.setSection(payload.get(position));

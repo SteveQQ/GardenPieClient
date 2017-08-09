@@ -10,6 +10,7 @@ import com.steveq.gardenpieclient.communication.models.Section;
 import com.steveq.gardenpieclient.communication.models.ToServerRequest;
 
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,6 +22,7 @@ public class JsonProcessor {
     public enum Method{
         SCAN,
         UPLOAD,
+        DOWNLOAD,
         CREATE_SCHEDULE,
         GET_STATE;
     }
@@ -51,6 +53,22 @@ public class JsonProcessor {
         ToServerRequest request = new ToServerRequest(Method.UPLOAD.toString(), sections);
         String json = gson.toJson(request);
         Log.d(TAG, "CREATED UPLOAD JSON : " + json);
+        return json;
+    }
+
+    public String createDownloadRequest(List<Integer> secitonsNums){
+        List<Section> sections = new ArrayList<>();
+        for(Integer i : secitonsNums){
+            Section section = new Section();
+            section.setNumber(i);
+            section.setActive(false);
+            section.setDays(new ArrayList<String>());
+            section.setTimes(new ArrayList<String>());
+            sections.add(section);
+        }
+        ToServerRequest request = new ToServerRequest(Method.DOWNLOAD.toString(), sections);
+        String json = gson.toJson(request);
+        Log.d(TAG, "CREATED DOWNLOAD JSON : " + json);
         return json;
     }
 

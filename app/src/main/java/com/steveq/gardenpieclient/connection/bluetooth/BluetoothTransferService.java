@@ -49,7 +49,7 @@ class BluetoothTransferService implements Runnable{
 
     @Override
     public void run(){
-        buffer = new byte[1024];
+        buffer = new byte[8000];
 
 
         while(true){

@@ -15,6 +15,7 @@ import com.steveq.gardenpieclient.base.BaseActivity;
 import com.steveq.gardenpieclient.connection.ConnectionHelper;
 import com.steveq.gardenpieclient.database.Repository;
 import com.steveq.gardenpieclient.database.SectionsRepository;
+import com.steveq.gardenpieclient.main_view.presentation.MainActivity;
 import com.steveq.gardenpieclient.main_view.presentation.MainActivityPresenterImpl;
 import com.steveq.gardenpieclient.communication.JsonProcessor;
 import com.steveq.gardenpieclient.communication.models.Section;
@@ -80,7 +81,7 @@ public class SectionsFragmentPresenterImpl implements SectionsFragmentPresenter 
             @Override
             public void run() {
                 Log.d(TAG, "ABORT RECEIVING MSG???");
-                if(!SectionsFragment.receivedMsg){
+                if(!MainActivity.receivedMsg){
                     Log.d(TAG, "ABORT RECEIVING MSG!!!");
                     parentActivity.runOnUiThread(new Runnable() {
                         @Override
@@ -109,7 +110,7 @@ public class SectionsFragmentPresenterImpl implements SectionsFragmentPresenter 
             @Override
             public void run() {
                 Log.d(TAG, "ABORT RECEIVING MSG???");
-                if(!SectionsFragment.receivedMsg){
+                if(!MainActivity.receivedMsg){
                     Log.d(TAG, "ABORT RECEIVING MSG!!!");
                     parentActivity.runOnUiThread(new Runnable() {
                         @Override
@@ -140,7 +141,7 @@ public class SectionsFragmentPresenterImpl implements SectionsFragmentPresenter 
             @Override
             public void run() {
                 Log.d(TAG, "ABORT RECEIVING MSG???");
-                if(!SectionsFragment.receivedMsg){
+                if(!MainActivity.receivedMsg){
                     Log.d(TAG, "ABORT RECEIVING MSG!!!");
                     parentActivity.runOnUiThread(new Runnable() {
                         @Override

@@ -34,6 +34,10 @@ public class SectionsRecyclerViewAdapter extends RecyclerView.Adapter<SectionsRe
         this.activity = activity;
     }
 
+    public List<Section> getPayload() {
+        return payload;
+    }
+
     public void setPayload(List<Section> payload) {
         this.payload = payload;
     }

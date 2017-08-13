@@ -36,4 +36,9 @@
     <string name="max_times_warning_str">Max Times Set Reached...</string>
     <string name="upload_label_str">Upload</string>
     <string name="download_label_str">Download</string>
+    <string name="no_weather_data_label_str">no weather data</string>
+    <string name="summary_label_str">Summary:</string>
+    <string name="temperature_label_str">Temperature:</string>
+    <string name="forecast_label_str">Next 48h</string>
+    <string name="tommorow_label_str">Tommorow</string>
 </resources>

@@ -11,7 +11,7 @@ import com.steveq.gardenpieclient.sections.presentation.SectionsFragment;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-    public static Handler mainHandler = new Handler(Looper.getMainLooper(), (SectionsFragment)MyPagerAdapter.fragmentsPoll.get(1));
+    public static Handler mainHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

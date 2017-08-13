@@ -5,9 +5,11 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
+import com.steveq.gardenpieclient.communication.models.BasicResponse;
 import com.steveq.gardenpieclient.communication.models.FromServerResponse;
 import com.steveq.gardenpieclient.communication.models.Section;
 import com.steveq.gardenpieclient.communication.models.ToServerRequest;
+import com.steveq.gardenpieclient.communication.models.WeatherResponse;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -23,8 +25,7 @@ public class JsonProcessor {
         SCAN,
         UPLOAD,
         DOWNLOAD,
-        CREATE_SCHEDULE,
-        GET_STATE;
+        WEATHER;
     }
 
     private Gson gson;
@@ -72,10 +73,18 @@ public class JsonProcessor {
         return json;
     }
 
+    public String createWeatherRequest(){
+        ToServerRequest request = new ToServerRequest(Method.WEATHER.toString());
+        String json = gson.toJson(request);
+        Log.d(TAG, "CREATED SCAN JSON : " + json);
+        return json;
+    }
+
     public FromServerResponse deserializeServerResponse(String json){
         JsonReader reader = new JsonReader(new StringReader(json));
         reader.setLenient(true);
         FromServerResponse response = gson.fromJson(reader, FromServerResponse.class);
         return response;
     }
+
 }

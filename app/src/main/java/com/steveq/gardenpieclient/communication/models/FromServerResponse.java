@@ -1,5 +1,8 @@
 package com.steveq.gardenpieclient.communication.models;
 
+import com.steveq.gardenpieclient.weather.model.WeatherModel;
+import com.steveq.gardenpieclient.weather.model.WeatherOutputModel;
+
 import java.util.List;
 
 /**
@@ -9,6 +12,7 @@ import java.util.List;
 public class FromServerResponse {
     private String method;
     private List<Section> payload;
+    private WeatherOutputModel weather;
 
     public String getMethod() {
         return method;
@@ -24,5 +28,13 @@ public class FromServerResponse {
 
     public void setSections(List<Section> sections) {
         this.payload = sections;
+    }
+
+    public WeatherOutputModel getWeather() {
+        return weather;
+    }
+
+    public void setWeather(WeatherOutputModel weather) {
+        this.weather = weather;
     }
 }

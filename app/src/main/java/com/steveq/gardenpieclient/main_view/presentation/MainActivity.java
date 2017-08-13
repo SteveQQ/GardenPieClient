@@ -3,6 +3,9 @@ package com.steveq.gardenpieclient.main_view.presentation;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -20,15 +23,27 @@ import android.widget.ProgressBar;
 import com.astuetz.PagerSlidingTabStrip;
 import com.steveq.gardenpieclient.R;
 import com.steveq.gardenpieclient.base.BaseActivity;
+import com.steveq.gardenpieclient.communication.JsonProcessor;
+import com.steveq.gardenpieclient.communication.models.BasicResponse;
+import com.steveq.gardenpieclient.communication.models.FromServerResponse;
+import com.steveq.gardenpieclient.communication.models.Section;
+import com.steveq.gardenpieclient.communication.models.WeatherResponse;
 import com.steveq.gardenpieclient.connection.bluetooth.BluetoothConnectionHelper;
+import com.steveq.gardenpieclient.sections.adapters.SectionsRecyclerViewAdapter;
+import com.steveq.gardenpieclient.sections.presentation.SectionsFragmentPresenterImpl;
+import com.steveq.gardenpieclient.sections.presentation.SectionsFragmentView;
 import com.steveq.gardenpieclient.settings.presentation.activities.SettingsActivity;
 import com.steveq.gardenpieclient.main_view.adapters.MyPagerAdapter;
 import com.steveq.gardenpieclient.sections.presentation.SectionsFragment;
 import com.steveq.gardenpieclient.sections.presentation.SectionsFragmentPresenter;
+import com.steveq.gardenpieclient.weather.presentation.WeatherFragmentView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public class MainActivity extends BaseActivity implements MainView {
+public class MainActivity extends BaseActivity implements MainView, android.os.Handler.Callback {
     private static final String TAG = MainActivity.class.getSimpleName();
     private Toolbar mainToolbar;
     private LinearLayout rootView;
@@ -38,6 +53,7 @@ public class MainActivity extends BaseActivity implements MainView {
     private ViewPager viewPager;
     private FragmentStatePagerAdapter pagerAdapter;
     private Snackbar warningSnackbar;
+    public static Boolean receivedMsg = false;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -49,6 +65,8 @@ public class MainActivity extends BaseActivity implements MainView {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        BaseActivity.mainHandler = new Handler(Looper.getMainLooper(), this);
 
         mainToolbar = (Toolbar) findViewById(R.id.mainToolbar);
         setSupportActionBar(mainToolbar);
@@ -142,5 +160,57 @@ public class MainActivity extends BaseActivity implements MainView {
     @Override
     public MainActivityPresenter getPresenter() {
         return this.presenter;
+    }
+
+    @Override
+    public boolean handleMessage(Message msg) {
+        Log.d(TAG, "HANDLE MESSAGE");
+        if(msg.what == BluetoothConnectionHelper.BT_MSG){
+            receivedMsg = true;
+            Log.d(TAG, "Message : " + new String((byte[])msg.obj));
+            FromServerResponse response = JsonProcessor.getInstance().deserializeServerResponse(new String((byte[])msg.obj));
+            switch(JsonProcessor.Method.valueOf(response.getMethod())){
+                case SCAN :
+                    if(response.getSections().size() > 0) {
+                        List<Integer> sectionNums = new ArrayList<>();
+                        for(Section section : response.getSections()){
+                            if(section.getNumber() == -1){
+                                this.showWarningSnackbar("Scanning not possible now");
+                                ((SectionsFragmentView)MyPagerAdapter.fragmentsPoll.get(1)).getPresenter().presentSections(((SectionsRecyclerViewAdapter) SectionsFragmentPresenterImpl.sectionsAdapter).getPayload());
+                                this.hideProgressBar();
+                                return true;
+                            }
+                            sectionNums.add(section.getNumber());
+                        }
+
+                        ((SectionsRecyclerViewAdapter)SectionsFragmentPresenterImpl.sectionsAdapter).setScannedSectionsNums(sectionNums);
+                        ((SectionsFragmentView)MyPagerAdapter.fragmentsPoll.get(1)).getPresenter().presentSections(response.getSections());
+                    }
+                    break;
+                case UPLOAD :
+                    StringBuilder syncedSections = new StringBuilder();
+                    for(Section section : response.getSections()){
+                        syncedSections.append(section.getNumber());
+                        syncedSections.append(",");
+                    }
+                    syncedSections.deleteCharAt(syncedSections.length()-1);
+                    this.showWarningSnackbar("Synced sections : " + syncedSections.toString());
+                    break;
+                case DOWNLOAD :
+                    ((SectionsFragmentView)MyPagerAdapter.fragmentsPoll.get(1)).getPresenter().acknowledgeDownloadedData(response.getSections());
+                    //((SectionsRecyclerViewAdapter)SectionsFragmentPresenterImpl.sectionsAdapter).setPayload(response.getSections());
+                    SectionsFragmentPresenterImpl.reloadDataInAdapter();
+                    break;
+                case WEATHER :
+                    ((WeatherFragmentView)MyPagerAdapter.fragmentsPoll.get(2)).getPresenter().acknowledgeWeatherData(response.getWeather());
+                    ((WeatherFragmentView)MyPagerAdapter.fragmentsPoll.get(2)).getPresenter().presentWeatherInfo();
+                    break;
+                default :
+                    break;
+            }
+            this.hideProgressBar();
+            return true;
+        }
+        return false;
     }
 }

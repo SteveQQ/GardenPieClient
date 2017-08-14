@@ -12,4 +12,18 @@
             android:defaultValue="@string/connection_option_default_str"
             />
     </PreferenceCategory>
+    <PreferenceCategory
+        android:title="Funcionalities"
+        android:key="funcionalities_category">
+        <com.steveq.gardenpieclient.settings.presentation.AutoCompleteEditTextPreference
+            android:key="location"
+            android:title="Set Current Location"
+            android:summary="..."
+            />
+
+        <EditTextPreference
+            android:key="duration"
+            android:title="Watering duration [s]"
+            android:defaultValue="60"/>
+    </PreferenceCategory>
 </PreferenceScreen>

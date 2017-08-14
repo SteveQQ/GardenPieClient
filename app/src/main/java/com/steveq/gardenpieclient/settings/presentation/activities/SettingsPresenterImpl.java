@@ -16,6 +16,7 @@ public class SettingsPresenterImpl implements SettingsPresenter {
     private static final String TAG = SettingsPresenterImpl.class.getSimpleName();
     private SettingsView settingsView;
     public static final int BLUETOOTH_PERMISSION_REQUEST = 1234;
+    public static final int BLUETOOTH_LOCATION_REQUEST = 4321;
 
     public SettingsPresenterImpl(SettingsView settingsView){
         this.settingsView = settingsView;

@@ -37,6 +37,8 @@ public class SettingsActivity extends AppCompatActivity implements SettingsView 
             if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 Log.d(TAG, "PERMISSION GRANTED");
             }
+        } else if (requestCode == SettingsPresenterImpl.BLUETOOTH_LOCATION_REQUEST){
+
         }
     }
 }

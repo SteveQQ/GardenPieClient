@@ -41,4 +41,5 @@
     <string name="temperature_label_str">Temperature:</string>
     <string name="forecast_label_str">Next 48h</string>
     <string name="tommorow_label_str">Tommorow</string>
+    <string name="default_location">19.444971,51.779843</string>
 </resources>

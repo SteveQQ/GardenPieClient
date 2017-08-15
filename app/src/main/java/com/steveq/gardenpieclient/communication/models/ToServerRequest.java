@@ -10,13 +10,22 @@ import java.util.List;
 public class ToServerRequest {
     private String method;
     private List<Section> payload;
+    private String coords;
+    private String duration;
+
+    public ToServerRequest(){
+        this.coords = "";
+        this.duration = "";
+    }
 
     public ToServerRequest(String method){
+        this();
         this.method = method;
         this.payload = new ArrayList<>();
     }
 
     public ToServerRequest(String method, List<Section> payload){
+        this();
         this.method = method;
         this.payload = payload;
     }
@@ -35,5 +44,21 @@ public class ToServerRequest {
 
     public void setPayload(List<Section> payload) {
         this.payload = payload;
+    }
+
+    public String getCoords() {
+        return coords;
+    }
+
+    public void setCoords(String coords) {
+        this.coords = coords;
+    }
+
+    public String getDuration() {
+        return duration;
+    }
+
+    public void setDuration(String duration) {
+        this.duration = duration;
     }
 }

@@ -128,7 +128,7 @@ public class SectionsFragmentPresenterImpl implements SectionsFragmentPresenter 
         for(Integer i : scanned){
             sectionsToUpload.add(repository.getSectionById(i));
         }
-        String message = JsonProcessor.getInstance().createUploadRequest(sectionsToUpload);
+        String message = JsonProcessor.getInstance().createUploadRequest(sectionsToUpload, parentActivity);
         connectionHelper.sendMessage(message);
     }
 

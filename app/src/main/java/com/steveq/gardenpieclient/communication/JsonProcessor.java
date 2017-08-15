@@ -1,6 +1,8 @@
 package com.steveq.gardenpieclient.communication;
 
 
+import android.content.Context;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -50,8 +52,9 @@ public class JsonProcessor {
         return json;
     }
 
-    public String createUploadRequest(List<Section> sections){
+    public String createUploadRequest(List<Section> sections, Context context){
         ToServerRequest request = new ToServerRequest(Method.UPLOAD.toString(), sections);
+        request.setDuration(PreferenceManager.getDefaultSharedPreferences(context).getString("duration", ""));
         String json = gson.toJson(request);
         Log.d(TAG, "CREATED UPLOAD JSON : " + json);
         return json;
@@ -73,8 +76,9 @@ public class JsonProcessor {
         return json;
     }
 
-    public String createWeatherRequest(){
+    public String createWeatherRequest(Context context){
         ToServerRequest request = new ToServerRequest(Method.WEATHER.toString());
+        request.setCoords(PreferenceManager.getDefaultSharedPreferences(context).getString("coords", ""));
         String json = gson.toJson(request);
         Log.d(TAG, "CREATED SCAN JSON : " + json);
         return json;

@@ -44,6 +44,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         locationPreference = findPreference("location");
         durationPreference = findPreference("duration");
         durationPreference.setSummary(String.valueOf(durationPreference.getSharedPreferences().getString(durationPreference.getKey(), "60")));
+        locationPreference.setSummary(String.valueOf(locationPreference.getSharedPreferences().getString(locationPreference.getKey(), "...")));
     }
 
     @Override

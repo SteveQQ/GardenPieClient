@@ -57,7 +57,7 @@ public class WeatherFragmentPresenterImpl implements WeatherFragmentPresenter {
         }, 7000);
         connectionHelper = MainActivityPresenterImpl.connectionHelper;
         parentActivity.showProgressBar();
-        String message = JsonProcessor.getInstance().createWeatherRequest();
+        String message = JsonProcessor.getInstance().createWeatherRequest(parentActivity);
         if(connectionHelper != null){
             connectionHelper.sendMessage(message);
         }

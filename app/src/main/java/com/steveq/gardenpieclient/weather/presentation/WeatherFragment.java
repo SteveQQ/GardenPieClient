@@ -24,6 +24,7 @@ import com.steveq.gardenpieclient.weather.model.WeatherOutputModel;
 public class WeatherFragment extends Fragment implements WeatherFragmentView{
     public static String TAG = WeatherFragment.class.getSimpleName();
     private WeatherFragmentPresenter presenter;
+    private boolean isViewShown = false;
     private SwipeRefreshLayout weatherSwipeRefresh;
 
     private TextView currentlySummaryTextView;
@@ -48,6 +49,7 @@ public class WeatherFragment extends Fragment implements WeatherFragmentView{
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        Log.d(TAG, "ON CREATE");
         super.onCreate(savedInstanceState);
         presenter = new WeatherFragmentPresenterImpl(this);
     }
@@ -55,6 +57,7 @@ public class WeatherFragment extends Fragment implements WeatherFragmentView{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(TAG, "ON CREATE VIEW");
         // Inflate the layout for this fragment
         ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_weather, container, false);
 
@@ -68,6 +71,10 @@ public class WeatherFragment extends Fragment implements WeatherFragmentView{
         forecastTemperatureTextView = (TextView) viewGroup.findViewById(R.id.forecastTemperatureTextView);
         forecastHumidityTextView = (TextView) viewGroup.findViewById(R.id.forecastHumidityTextView);
 
+        if(!isViewShown){
+            presenter.getWeatherInfo();
+        }
+
         return viewGroup;
     }
 
@@ -80,8 +87,12 @@ public class WeatherFragment extends Fragment implements WeatherFragmentView{
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         Log.d(TAG, "IS VISIBLE" + isVisibleToUser);
-        if(isVisibleToUser){
+        if(getView() != null){
+            isViewShown = true;
             presenter.getWeatherInfo();
+        }
+        if(isVisibleToUser){
+            isViewShown = false;
         }
     }
 

@@ -76,12 +76,12 @@ class ConnectionServerRunnable implements Runnable {
             connectionHelper.connectedCallback();
             return;
         }
-        connectionHelper.connectedCallback();
         Log.d(TAG, "IT'S PLACE TO MANAGE CONNECTION IN SEPARATE THREAD");
         HandlerThread thread = new HandlerThread("bluetooth_transfer_thread");
         thread.start();
         Handler handler = new Handler(thread.getLooper());
         BluetoothCommunicator.bluetoothTransferService = new BluetoothTransferService(clientSocket);
         handler.post(BluetoothCommunicator.bluetoothTransferService);
+        connectionHelper.connectedCallback();
     }
 }

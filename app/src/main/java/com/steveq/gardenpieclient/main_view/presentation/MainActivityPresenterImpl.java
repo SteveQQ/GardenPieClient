@@ -71,12 +71,12 @@ public class MainActivityPresenterImpl implements MainActivityPresenter {
     public void establishConnection() {
         ((BaseActivity)mainView).dismissWarningSnackbar();
         ((BaseActivity)mainView).showProgressBar();
-        if(connectionHelper != null){
+        if(connectionHelper != null && !connectionHelper.isConnected()){
             Log.d(TAG, "ESTABLISHING CONNECTION");
             Log.d(TAG, connectionHelper.toString());
             //connectionHelper.connect(new Handler(((SectionsFragmentPresenterImpl)((SectionsFragment)MyPagerAdapter.fragmentsPoll.get(1)).getPresenter())));
             connectionHelper.connect(BaseActivity.mainHandler);
-        } else {
+        } else if(connectionHelper == null){
             ((BaseActivity)mainView).hideProgressBar();
             ((BaseActivity)mainView).showWarningSnackbarWithAction(
                     ((Activity) mainView).getString(R.string.no_connection_warning_str),

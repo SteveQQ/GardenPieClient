@@ -202,8 +202,12 @@ public class MainActivity extends BaseActivity implements MainView, android.os.H
                     SectionsFragmentPresenterImpl.reloadDataInAdapter();
                     break;
                 case WEATHER :
-                    ((WeatherFragmentView)MyPagerAdapter.fragmentsPoll.get(2)).getPresenter().acknowledgeWeatherData(response.getWeather());
-                    ((WeatherFragmentView)MyPagerAdapter.fragmentsPoll.get(2)).getPresenter().presentWeatherInfo();
+                    if(response.getWeather().getCurrently() != null){
+                        ((WeatherFragmentView)MyPagerAdapter.fragmentsPoll.get(2)).getPresenter().acknowledgeWeatherData(response.getWeather());
+                        ((WeatherFragmentView)MyPagerAdapter.fragmentsPoll.get(2)).getPresenter().presentWeatherInfo();
+                    } else {
+                        this.showWarningSnackbar("Not possible to get weather data");
+                    }
                     break;
                 default :
                     break;

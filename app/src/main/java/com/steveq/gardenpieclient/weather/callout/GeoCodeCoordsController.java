@@ -6,14 +6,8 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.steveq.gardenpieclient.settings.presentation.AutoCompleteEditTextPreference;
 import com.steveq.gardenpieclient.utils.FilesUtils;
-import com.steveq.gardenpieclient.weather.callout.model.GeoAutocompleteDescriptionModel;
-import com.steveq.gardenpieclient.weather.callout.model.GeoAutocompleteModel;
 import com.steveq.gardenpieclient.weather.callout.model.GeoCoordsModel;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;

@@ -27,7 +27,8 @@ public class JsonProcessor {
         SCAN,
         UPLOAD,
         DOWNLOAD,
-        WEATHER;
+        WEATHER,
+        SENSORS
     }
 
     private Gson gson;
@@ -80,7 +81,14 @@ public class JsonProcessor {
         ToServerRequest request = new ToServerRequest(Method.WEATHER.toString());
         request.setCoords(PreferenceManager.getDefaultSharedPreferences(context).getString("coords", ""));
         String json = gson.toJson(request);
-        Log.d(TAG, "CREATED SCAN JSON : " + json);
+        Log.d(TAG, "CREATED WEATHER JSON : " + json);
+        return json;
+    }
+
+    public String createSensorsRequest(){
+        ToServerRequest request = new ToServerRequest(Method.SENSORS.toString());
+        String json = gson.toJson(request);
+        Log.d(TAG, "CREATED SENSOR JSON : " + json);
         return json;
     }
 

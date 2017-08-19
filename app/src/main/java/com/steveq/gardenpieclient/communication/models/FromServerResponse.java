@@ -13,6 +13,7 @@ public class FromServerResponse {
     private String method;
     private List<Section> payload;
     private WeatherOutputModel weather;
+    private List<Sensor> sensors;
 
     public String getMethod() {
         return method;
@@ -36,5 +37,13 @@ public class FromServerResponse {
 
     public void setWeather(WeatherOutputModel weather) {
         this.weather = weather;
+    }
+
+    public List<Sensor> getSensors() {
+        return sensors;
+    }
+
+    public void setSensors(List<Sensor> sensors) {
+        this.sensors = sensors;
     }
 }

@@ -38,8 +38,10 @@ public class WeatherFragment extends Fragment implements WeatherFragmentView{
     private SwipeRefreshLayout.OnRefreshListener onRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
-            presenter.getWeatherInfo();
-            weatherSwipeRefresh.setRefreshing(false);
+            if(isVisible()){
+                presenter.getWeatherInfo();
+                weatherSwipeRefresh.setRefreshing(false);
+            }
         }
     };
 
@@ -71,7 +73,7 @@ public class WeatherFragment extends Fragment implements WeatherFragmentView{
         forecastTemperatureTextView = (TextView) viewGroup.findViewById(R.id.forecastTemperatureTextView);
         forecastHumidityTextView = (TextView) viewGroup.findViewById(R.id.forecastHumidityTextView);
 
-        if(!isViewShown){
+        if(isViewShown){
             presenter.getWeatherInfo();
         }
 
@@ -87,11 +89,17 @@ public class WeatherFragment extends Fragment implements WeatherFragmentView{
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         Log.d(TAG, "IS VISIBLE" + isVisibleToUser);
-        if(getView() != null){
-            isViewShown = true;
-            presenter.getWeatherInfo();
-        }
+        Log.d(TAG, "VIEW" + getView());
+//        if(getView() != null){
+//            isViewShown = true;
+//            presenter.getWeatherInfo();
+//        }
         if(isVisibleToUser){
+            isViewShown = true;
+            if(getView() != null) {
+                presenter.getWeatherInfo();
+            }
+        } else {
             isViewShown = false;
         }
     }

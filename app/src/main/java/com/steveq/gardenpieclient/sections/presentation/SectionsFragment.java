@@ -39,6 +39,7 @@ public class SectionsFragment extends Fragment implements SectionsFragmentView{
     private static final Integer MAX_TIMES = 6;
     private SectionsFragmentPresenter presenter;
     private RecyclerView sectionsRecycler;
+    private boolean isViewShown = false;
 
     private FloatingActionMenu sectionsMenuFab;
     private com.github.clans.fab.FloatingActionButton uploadFab;
@@ -49,8 +50,10 @@ public class SectionsFragment extends Fragment implements SectionsFragmentView{
     private SwipeRefreshLayout.OnRefreshListener onRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
-            presenter.scanForSections();
-            swipeRefreshLayout.setRefreshing(false);
+            if(isVisible()){
+                presenter.scanForSections();
+                swipeRefreshLayout.setRefreshing(false);
+            }
         }
     };
     private View.OnClickListener uploadFabClick = new View.OnClickListener() {
@@ -99,6 +102,11 @@ public class SectionsFragment extends Fragment implements SectionsFragmentView{
 
         emptyTextView = (TextView) viewGroup.findViewById(R.id.emptyRecyclerViewReplacement);
         presenter.initView();
+
+        if(isViewShown){
+            presenter.scanForSections();
+        }
+
         return viewGroup;
     }
 
@@ -119,8 +127,18 @@ public class SectionsFragment extends Fragment implements SectionsFragmentView{
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         Log.d(TAG, "IS VISIBLE" + isVisibleToUser);
+        Log.d(TAG, "VIEW" + getView());
+//        if(getView() != null){
+//            isViewShown = true;
+//            presenter.scanForSections();
+//        }
         if(isVisibleToUser){
-            presenter.scanForSections();
+            isViewShown = true;
+            if(getView() != null) {
+                presenter.scanForSections();
+            }
+        } else {
+            isViewShown = false;
         }
     }
 
@@ -172,54 +190,6 @@ public class SectionsFragment extends Fragment implements SectionsFragmentView{
         emptyTextView.setVisibility(View.VISIBLE);
         sectionsRecycler.setVisibility(View.INVISIBLE);
     }
-//
-//    @Override
-//    public boolean handleMessage(Message msg) {
-//        Log.d(TAG, "HANDLE MESSAGE");
-//        if(msg.what == BluetoothConnectionHelper.BT_MSG){
-//            receivedMsg = true;
-//            Log.d(TAG, "Message : " + new String((byte[])msg.obj));
-//            //List<Integer> sectionsNums = JsonProcessor.getInstance().deserializeServerResponse(new String((byte[])msg.obj));
-//            FromServerResponse response = JsonProcessor.getInstance().deserializeServerResponse(new String((byte[])msg.obj));
-//            switch(JsonProcessor.Method.valueOf(response.getMethod())){
-//                case SCAN :
-//                    if(response.getSections().size() > 0) {
-//                        List<Integer> sectionNums = new ArrayList<>();
-//                        for(Section section : response.getSections()){
-//                            if(section.getNumber() == -1){
-//                                ((BaseActivity)getActivity()).showWarningSnackbar("Scanning not possible now");
-//                                presenter.presentSections(((SectionsRecyclerViewAdapter)SectionsFragmentPresenterImpl.sectionsAdapter).getPayload());
-//                                ((BaseActivity)getActivity()).hideProgressBar();
-//                                return true;
-//                            }
-//                            sectionNums.add(section.getNumber());
-//                        }
-//
-//                        ((SectionsRecyclerViewAdapter)SectionsFragmentPresenterImpl.sectionsAdapter).setScannedSectionsNums(sectionNums);
-//                        presenter.presentSections(response.getSections());
-//                    }
-//                    break;
-//                case UPLOAD :
-//                    StringBuilder syncedSections = new StringBuilder();
-//                    for(Section section : response.getSections()){
-//                        syncedSections.append(section.getNumber());
-//                        syncedSections.append(",");
-//                    }
-//                    syncedSections.deleteCharAt(syncedSections.length()-1);
-//                    ((BaseActivity)getActivity()).showWarningSnackbar("Synced sections : " + syncedSections.toString());
-//                    break;
-//                case DOWNLOAD :
-//                    presenter.acknowledgeDownloadedData(response.getSections());
-//                    //((SectionsRecyclerViewAdapter)SectionsFragmentPresenterImpl.sectionsAdapter).setPayload(response.getSections());
-//                    SectionsFragmentPresenterImpl.reloadDataInAdapter();
-//                default :
-//                    break;
-//            }
-//            ((BaseActivity)getActivity()).hideProgressBar();
-//            return true;
-//        }
-//        return false;
-//    }
 
     @Override
     public void showDaysDialog(final Section section) {

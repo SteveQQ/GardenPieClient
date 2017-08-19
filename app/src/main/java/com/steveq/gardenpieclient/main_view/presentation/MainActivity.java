@@ -29,6 +29,8 @@ import com.steveq.gardenpieclient.communication.models.FromServerResponse;
 import com.steveq.gardenpieclient.communication.models.Section;
 import com.steveq.gardenpieclient.communication.models.WeatherResponse;
 import com.steveq.gardenpieclient.connection.bluetooth.BluetoothConnectionHelper;
+import com.steveq.gardenpieclient.dashboard.presentation.DashboardFragmentPresenterImpl;
+import com.steveq.gardenpieclient.dashboard.presentation.DashboardFragmentView;
 import com.steveq.gardenpieclient.sections.adapters.SectionsRecyclerViewAdapter;
 import com.steveq.gardenpieclient.sections.presentation.SectionsFragmentPresenterImpl;
 import com.steveq.gardenpieclient.sections.presentation.SectionsFragmentView;
@@ -208,6 +210,9 @@ public class MainActivity extends BaseActivity implements MainView, android.os.H
                     } else {
                         this.showWarningSnackbar("Not possible to get weather data");
                     }
+                    break;
+                case SENSORS :
+                    ((DashboardFragmentView)MyPagerAdapter.fragmentsPoll.get(0)).getPresenter().acknowledgeSensorsData(response.getSensors());
                     break;
                 default :
                     break;
